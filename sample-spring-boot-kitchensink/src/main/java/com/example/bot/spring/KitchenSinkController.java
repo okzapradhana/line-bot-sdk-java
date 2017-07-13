@@ -366,13 +366,13 @@ public class KitchenSinkController {
                         )
                 ));
                 break;
-            default:
-                log.info("Returns echo message {}: {}", replyToken, text);
-                this.replyText(
-                        replyToken,
-                        text
-                );
-                break;
+//             default:
+//                 log.info("Returns echo message {}: {}", replyToken, text);
+//                 this.replyText(
+//                         replyToken,
+//                         text
+//                 );
+//                 break;
         }
     }
 
