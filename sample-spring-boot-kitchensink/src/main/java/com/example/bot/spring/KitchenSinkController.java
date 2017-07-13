@@ -169,7 +169,7 @@ public class KitchenSinkController {
 
     @EventMapping
     public void handleJoinEvent(JoinEvent event) {
-//         String replyToken = event.getReplyToken();
+        String replyToken = event.getReplyToken();
 //         this.replyText(replyToken, "Joined " + event.getSource());
         this.replyText(replyToken, "Halo! Terimakasih telah mengundang Nguliah .com ke grup ini");
         
