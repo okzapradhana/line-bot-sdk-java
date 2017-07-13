@@ -21,3 +21,7 @@ or if you finished create `src/main/resources/application.yml` file based on `sr
   * line.bot.channelSecret: Your Channel secret
 
 For more information about configuration way, refer [Spring Boot Reference - 24. Externalized Configuration](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html).
+## Deploy
+Tap the deploy button.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/okzapradhana/line-bot-sdk-java)
