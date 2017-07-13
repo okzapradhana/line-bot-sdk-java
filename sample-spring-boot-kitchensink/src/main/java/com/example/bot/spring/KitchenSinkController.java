@@ -171,7 +171,7 @@ public class KitchenSinkController {
     public void handleJoinEvent(JoinEvent event) {
 //         String replyToken = event.getReplyToken();
 //         this.replyText(replyToken, "Joined " + event.getSource());
-        this.replyText(replyToket, "Halo! Terimakasih telah mengundang Nguliah .com ke grup ini");
+        this.replyText(replyToken, "Halo! Terimakasih telah mengundang Nguliah .com ke grup ini");
         
     }
 
