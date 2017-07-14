@@ -291,7 +291,7 @@ public class KitchenSinkController {
                 break;
             }
             case "jadwalfilkom": {
-                String imageJadwalUrl = createUri("/static/buttons/1040.jpg");
+                String imageJadwalUrl = createUri("/static/buttons/filkom.png");
                 ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
                     imageJadwalUrl,
                     "Jadwal Akademik",
@@ -299,7 +299,7 @@ public class KitchenSinkController {
                     Arrays.asList(
                         new URIAction("Check schedule here",
                           "http://filkom.ub.ac.id/jadwal"),
-                        new URIAction("Want to check your SIAM? Click this!",
+                        new URIAction("Check SIAM here",
                            "https://siam.ub.ac.id/")
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Jadwal FILKOM 2017/2018", buttonsTemplate);
