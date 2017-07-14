@@ -102,58 +102,58 @@ public class KitchenSinkController {
     public void handleLocationMessageEvent(MessageEvent<LocationMessageContent> event) {
         LocationMessageContent locationMessage = event.getMessage();
         reply(event.getReplyToken(), new LocationMessage(
-                locationMessage.getTitle(),
-                locationMessage.getAddress(),
-                locationMessage.getLatitude(),
-                locationMessage.getLongitude()
-        ));
+            locationMessage.getTitle(),
+            locationMessage.getAddress(),
+            locationMessage.getLatitude(),
+            locationMessage.getLongitude()
+            ));
     }
 
     @EventMapping
     public void handleImageMessageEvent(MessageEvent<ImageMessageContent> event) throws IOException {
         // You need to install ImageMagick
         handleHeavyContent(
-                event.getReplyToken(),
-                event.getMessage().getId(),
-                responseBody -> {
-                    DownloadedContent jpg = saveContent("jpg", responseBody);
-                    DownloadedContent previewImg = createTempFile("jpg");
-                    system(
-                            "convert",
-                            "-resize", "240x",
-                            jpg.path.toString(),
-                            previewImg.path.toString());
-                    reply(((MessageEvent) event).getReplyToken(),
-                          new ImageMessage(jpg.getUri(), jpg.getUri()));
-                });
+            event.getReplyToken(),
+            event.getMessage().getId(),
+            responseBody -> {
+                DownloadedContent jpg = saveContent("jpg", responseBody);
+                DownloadedContent previewImg = createTempFile("jpg");
+                system(
+                    "convert",
+                    "-resize", "240x",
+                    jpg.path.toString(),
+                    previewImg.path.toString());
+                reply(((MessageEvent) event).getReplyToken(),
+                  new ImageMessage(jpg.getUri(), jpg.getUri()));
+            });
     }
 
     @EventMapping
     public void handleAudioMessageEvent(MessageEvent<AudioMessageContent> event) throws IOException {
         handleHeavyContent(
-                event.getReplyToken(),
-                event.getMessage().getId(),
-                responseBody -> {
-                    DownloadedContent mp4 = saveContent("mp4", responseBody);
-                    reply(event.getReplyToken(), new AudioMessage(mp4.getUri(), 100));
-                });
+            event.getReplyToken(),
+            event.getMessage().getId(),
+            responseBody -> {
+                DownloadedContent mp4 = saveContent("mp4", responseBody);
+                reply(event.getReplyToken(), new AudioMessage(mp4.getUri(), 100));
+            });
     }
 
     @EventMapping
     public void handleVideoMessageEvent(MessageEvent<VideoMessageContent> event) throws IOException {
         // You need to install ffmpeg and ImageMagick.
         handleHeavyContent(
-                event.getReplyToken(),
-                event.getMessage().getId(),
-                responseBody -> {
-                    DownloadedContent mp4 = saveContent("mp4", responseBody);
-                    DownloadedContent previewImg = createTempFile("jpg");
-                    system("convert",
-                           mp4.path + "[0]",
-                           previewImg.path.toString());
-                    reply(((MessageEvent) event).getReplyToken(),
-                          new VideoMessage(mp4.getUri(), previewImg.uri));
-                });
+            event.getReplyToken(),
+            event.getMessage().getId(),
+            responseBody -> {
+                DownloadedContent mp4 = saveContent("mp4", responseBody);
+                DownloadedContent previewImg = createTempFile("jpg");
+                system("convert",
+                   mp4.path + "[0]",
+                   previewImg.path.toString());
+                reply(((MessageEvent) event).getReplyToken(),
+                  new VideoMessage(mp4.getUri(), previewImg.uri));
+            });
     }
 
     @EventMapping
@@ -199,8 +199,8 @@ public class KitchenSinkController {
     private void reply(@NonNull String replyToken, @NonNull List<Message> messages) {
         try {
             BotApiResponse apiResponse = lineMessagingClient
-                    .replyMessage(new ReplyMessage(replyToken, messages))
-                    .get();
+            .replyMessage(new ReplyMessage(replyToken, messages))
+            .get();
             log.info("Sent messages: {}", apiResponse);
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
@@ -218,11 +218,11 @@ public class KitchenSinkController {
     }
 
     private void handleHeavyContent(String replyToken, String messageId,
-                                    Consumer<MessageContentResponse> messageConsumer) {
+        Consumer<MessageContentResponse> messageConsumer) {
         final MessageContentResponse response;
         try {
             response = lineMessagingClient.getMessageContent(messageId)
-                                          .get();
+            .get();
         } catch (InterruptedException | ExecutionException e) {
             reply(replyToken, new TextMessage("Cannot get image: " + e.getMessage()));
             throw new RuntimeException(e);
@@ -232,12 +232,12 @@ public class KitchenSinkController {
 
     private void handleSticker(String replyToken, StickerMessageContent content) {
         reply(replyToken, new StickerMessage(
-                content.getPackageId(), content.getStickerId())
+            content.getPackageId(), content.getStickerId())
         );
     }
 
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
-            throws Exception {
+    throws Exception {
         String text = content.getText();
 
         log.info("Got text message from {}: {}", replyToken, text);
@@ -246,22 +246,22 @@ public class KitchenSinkController {
                 String userId = event.getSource().getUserId();
                 if (userId != null) {
                     lineMessagingClient
-                            .getProfile(userId)
-                            .whenComplete((profile, throwable) -> {
-                                if (throwable != null) {
-                                    this.replyText(replyToken, throwable.getMessage());
-                                    return;
-                                }
+                    .getProfile(userId)
+                    .whenComplete((profile, throwable) -> {
+                        if (throwable != null) {
+                            this.replyText(replyToken, throwable.getMessage());
+                            return;
+                        }
 
-                                this.reply(
-                                        replyToken,
-                                        Arrays.asList(new TextMessage(
-                                                              "Display name: " + profile.getDisplayName()),
-                                                      new TextMessage("Status message: "
-                                                                      + profile.getStatusMessage()))
-                                );
+                        this.reply(
+                            replyToken,
+                            Arrays.asList(new TextMessage(
+                              "Display name: " + profile.getDisplayName()),
+                            new TextMessage("Status message: "
+                              + profile.getStatusMessage()))
+                            );
 
-                            });
+                    });
                 } else {
                     this.replyText(replyToken, "Bot can't use profile API without user ID");
                 }
@@ -282,104 +282,114 @@ public class KitchenSinkController {
             }
             case "confirm": {
                 ConfirmTemplate confirmTemplate = new ConfirmTemplate(
-                        "Do it?",
-                        new MessageAction("Yes", "Yes!"),
-                        new MessageAction("No", "No!")
-                );
+                    "Do it?",
+                    new MessageAction("Yes", "Yes!"),
+                    new MessageAction("No", "No!")
+                    );
                 TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
                 this.reply(replyToken, templateMessage);
                 break;
             }
-            case "buttons": {
-                String imageUrl = createUri("/static/buttons/1040.jpg");
+            case "jadwalfilkom": {
+                String imageJadwalUrl = createUri("/static/buttons/jadwalfilkom.png");
                 ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
-                        imageUrl,
-                        "My button sample",
-                        "Hello, my button",
-                        Arrays.asList(
-                                new URIAction("Go to line.me",
-                                              "https://line.me"),
-                                new PostbackAction("Say hello1",
-                                                   "hello こんにちは"),
-                                new PostbackAction("言 hello2",
-                                                   "hello こんにちは",
-                                                   "hello こんにちは"),
-                                new MessageAction("Say message",
-                                                  "Rice=米")
+                    imageJadwalUrl,
+                    "Jadwal Akademik",
+                    "FILKOM 2017/2018",
+                    Arrays.asList(
+                        new URIAction("Check schedule here",
+                          "http://filkom.ub.ac.id/jadwal"),
+                        new URIAction("Want to check your SIAM? Click this!",
+                           "https://siam.ub.ac.id/"),
+                        new URIAction("Or want to know more about UB? Visit here!",
+                           "https://ub.ac.id/"),
+                        new MessageAction("Got it! Thanks",
+                          "Nice!")
                         ));
-                TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
+                TemplateMessage templateMessage = new TemplateMessage("Jadwal FILKOM 2017/2018", buttonsTemplate);
                 this.reply(replyToken, templateMessage);
                 break;
             }
-            case "carousel": {
+            case "info": {
                 String imageUrl = createUri("/static/buttons/1040.jpg");
+                String imageInfoUrl1 = createUri("/static/buttons/carousel1.png");
+                String imageInfoUrl2 = createUri("/static/buttons/carousel2.png");
+                String imageInfoUrl3 = createUri("/static/buttons/carousel3.png");
                 CarouselTemplate carouselTemplate = new CarouselTemplate(
-                        Arrays.asList(
-                                new CarouselColumn(imageUrl, "hoge", "fuga", Arrays.asList(
-                                        new URIAction("Go to line.me",
-                                                      "https://line.me"),
-                                        new PostbackAction("Say hello1",
-                                                           "hello こんにちは")
-                                )),
-                                new CarouselColumn(imageUrl, "hoge", "fuga", Arrays.asList(
-                                        new PostbackAction("言 hello2",
-                                                           "hello こんにちは",
-                                                           "hello こんにちは"),
-                                        new MessageAction("Say message",
-                                                          "Rice=米")
-                                ))
+                    Arrays.asList(
+                        new CarouselColumn(imageInfoUrl1, "Oprec Asisten Lab Siskom", "Deadline: 23 Juli 2017, 23.59 WIB", Arrays.asList(
+                            new URIAction("Go to page",
+                              "http://filkom.ub.ac.id/page/read/pengumuman/open-recruitment-asisten-laboratorium-pembelajaran-bidang-sistem-komputer-2017/1b3f7a8"),
+                            new MessageAction("Got it! Thanks",
+                               "Nice!")
+                            )),
+                        new CarouselColumn(imageInfoUrl2, "Daful Mala FILKOM Smt. Ganjil", "8-16 Agustus 2017", Arrays.asList(
+                            new URIAction("Go to page",
+                              "http://filkom.ub.ac.id/page/read/pengumuman/daftar-ulang-mahasiswa-lama-filkom-semester-ganjil-2017-2018/5ff72d4"),
+                            new MessageAction("Got it! Thanks",
+                               "Nice!")
+                            )),
+                        new CarouselColumn(imageInfoUrl3, "Pendaftaran Gemastik 2017", "PTN: 17 Juli 2017, TIM: 18 Juli 2017", Arrays.asList(
+                            new URIAction("Go to page","http://filkom.ub.ac.id/page/read/pengumuman/pendaftaran-gemastik-2017/9d299d4"),
+                            new URIAction("Go to gemastik page","https://gemastik.ui.ac.id/")
+                            /*new PostbackAction("言 hello2",
+                               "hello こんにちは",
+                               "hello こんにちは"),
+                            new MessageAction("Say message",
+                            "Rice=米")*/
+                            ))
                         ));
-                TemplateMessage templateMessage = new TemplateMessage("Carousel alt text", carouselTemplate);
+                TemplateMessage templateMessage = new TemplateMessage("filkom.ub.ac.id announcement", carouselTemplate);
                 this.reply(replyToken, templateMessage);
                 break;
             }
             case "imagemap":
-                this.reply(replyToken, new ImagemapMessage(
-                        createUri("/static/rich"),
-                        "This is alt text",
-                        new ImagemapBaseSize(1040, 1040),
-                        Arrays.asList(
-                                new URIImagemapAction(
-                                        "https://store.line.me/family/manga/en",
-                                        new ImagemapArea(
-                                                0, 0, 520, 520
-                                        )
-                                ),
-                                new URIImagemapAction(
-                                        "https://store.line.me/family/music/en",
-                                        new ImagemapArea(
-                                                520, 0, 520, 520
-                                        )
-                                ),
-                                new URIImagemapAction(
-                                        "https://store.line.me/family/play/en",
-                                        new ImagemapArea(
-                                                0, 520, 520, 520
-                                        )
-                                ),
-                                new MessageImagemapAction(
-                                        "URANAI!",
-                                        new ImagemapArea(
-                                                520, 520, 520, 520
-                                        )
-                                )
+            this.reply(replyToken, new ImagemapMessage(
+                createUri("/static/rich"),
+                "This is alt text",
+                new ImagemapBaseSize(1040, 1040),
+                Arrays.asList(
+                    new URIImagemapAction(
+                        "https://store.line.me/family/manga/en",
+                        new ImagemapArea(
+                            0, 0, 520, 520
+                            )
+                        ),
+                    new URIImagemapAction(
+                        "https://store.line.me/family/music/en",
+                        new ImagemapArea(
+                            520, 0, 520, 520
+                            )
+                        ),
+                    new URIImagemapAction(
+                        "https://store.line.me/family/play/en",
+                        new ImagemapArea(
+                            0, 520, 520, 520
+                            )
+                        ),
+                    new MessageImagemapAction(
+                        "URANAI!",
+                        new ImagemapArea(
+                            520, 520, 520, 520
+                            )
                         )
+                    )
                 ));
-                break;
+            break;
             default:
-                log.info("Returns echo message {}: {}", replyToken, text);
-                this.replyText(
-                        replyToken,
-                        text
+            log.info("Returns echo message {}: {}", replyToken, text);
+            this.replyText(
+                replyToken,
+                text
                 );
-                break;
+            break;
         }
     }
 
     private static String createUri(String path) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
-                                          .path(path).build()
-                                          .toUriString();
+        .path(path).build()
+        .toUriString();
     }
 
     private void system(String... args) {
@@ -414,8 +424,8 @@ public class KitchenSinkController {
         Path tempFile = KitchenSinkApplication.downloadedContentDir.resolve(fileName);
         tempFile.toFile().deleteOnExit();
         return new DownloadedContent(
-                tempFile,
-                createUri("/downloaded/" + tempFile.getFileName()));
+            tempFile,
+            createUri("/downloaded/" + tempFile.getFileName()));
     }
 
     @Value
