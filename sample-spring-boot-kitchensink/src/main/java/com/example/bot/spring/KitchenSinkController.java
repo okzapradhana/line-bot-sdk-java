@@ -270,10 +270,10 @@ public class KitchenSinkController {
             case "bye": {
                 Source source = event.getSource();
                 if (source instanceof GroupSource) {
-                    this.replyText(replyToken, "Leaving group");
+                    this.replyText(replyToken, "Terimakasih! Selamat ber-Kuliah");
                     lineMessagingClient.leaveGroup(((GroupSource) source).getGroupId()).get();
                 } else if (source instanceof RoomSource) {
-                    this.replyText(replyToken, "Leaving room");
+                    this.replyText(replyToken, "Terimakasih! Selamat ber-Kuliah");
                     lineMessagingClient.leaveRoom(((RoomSource) source).getRoomId()).get();
                 } else {
                     this.replyText(replyToken, "Bot can't leave from 1:1 chat");
@@ -282,11 +282,11 @@ public class KitchenSinkController {
             }
             case "confirm": {
                 ConfirmTemplate confirmTemplate = new ConfirmTemplate(
-                    "Do it?",
+                    "Ya / Tidak ?",
                     new MessageAction("Yes", "Yes!"),
                     new MessageAction("No", "No!")
                     );
-                TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+                TemplateMessage templateMessage = new TemplateMessage("Yakin?", confirmTemplate);
                 this.reply(replyToken, templateMessage);
                 break;
             }
@@ -307,7 +307,6 @@ public class KitchenSinkController {
                 break;
             }
             case "info": {
-                String imageUrl = createUri("/static/buttons/1040.jpg");
                 String imageInfoUrl1 = createUri("/static/buttons/carousel1.png");
                 String imageInfoUrl2 = createUri("/static/buttons/carousel2.png");
                 String imageInfoUrl3 = createUri("/static/buttons/carousel3.png");
@@ -373,11 +372,6 @@ public class KitchenSinkController {
                 ));
             break;
             default:
-            log.info("Returns echo message {}: {}", replyToken, text);
-            this.replyText(
-                replyToken,
-                text
-                );
             break;
         }
     }
