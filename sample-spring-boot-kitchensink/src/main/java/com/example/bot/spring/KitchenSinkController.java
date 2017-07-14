@@ -149,8 +149,8 @@ public class KitchenSinkController {
                 DownloadedContent mp4 = saveContent("mp4", responseBody);
                 DownloadedContent previewImg = createTempFile("jpg");
                 system("convert",
-                   mp4.path + "[0]",
-                   previewImg.path.toString());
+                 mp4.path + "[0]",
+                 previewImg.path.toString());
                 reply(((MessageEvent) event).getReplyToken(),
                   new VideoMessage(mp4.getUri(), previewImg.uri));
             });
@@ -230,11 +230,11 @@ public class KitchenSinkController {
         messageConsumer.accept(response);
     }
 
-    private void handleSticker(String replyToken, StickerMessageContent content) {
+    /*private void handleSticker(String replyToken, StickerMessageContent content) {
         reply(replyToken, new StickerMessage(
             content.getPackageId(), content.getStickerId())
         );
-    }
+    }*/
 
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
     throws Exception {
@@ -258,8 +258,11 @@ public class KitchenSinkController {
                             Arrays.asList(new TextMessage(
                               "Display name: " + profile.getDisplayName()),
                             new TextMessage("Status message: "
-                              + profile.getStatusMessage()))
-                            );
+                              + profile.getStatusMessage()),
+                            new TextMessage("Picture: " +profile.getPictureUrl()),
+                            new TextMessage("User id: " +profile.getUserId())
+                            ))
+                        ;
 
                     });
                 } else {
@@ -300,7 +303,7 @@ public class KitchenSinkController {
                         new URIAction("Check schedule here",
                           "http://filkom.ub.ac.id/jadwal"),
                         new URIAction("Check SIAM here",
-                           "https://siam.ub.ac.id/")
+                         "https://siam.ub.ac.id/")
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Jadwal FILKOM 2017/2018", buttonsTemplate);
                 this.reply(replyToken, templateMessage);
@@ -316,13 +319,13 @@ public class KitchenSinkController {
                             new URIAction("Go to page",
                               "http://filkom.ub.ac.id/page/read/pengumuman/open-recruitment-asisten-laboratorium-pembelajaran-bidang-sistem-komputer-2017/1b3f7a8"),
                             new MessageAction("Got it! Thanks",
-                               "Nice!")
+                             "Nice!")
                             )),
                         new CarouselColumn(imageInfoUrl2, "Daful Mala FILKOM Smt. Ganjil", "8-16 Agustus 2017", Arrays.asList(
                             new URIAction("Go to page",
                               "http://filkom.ub.ac.id/page/read/pengumuman/daftar-ulang-mahasiswa-lama-filkom-semester-ganjil-2017-2018/5ff72d4"),
                             new MessageAction("Got it! Thanks",
-                               "Nice!")
+                             "Nice!")
                             )),
                         new CarouselColumn(imageInfoUrl3, "Pendaftaran Gemastik 2017", "PTN: 17 Juli 2017, TIM: 18 Juli 2017", Arrays.asList(
                             new URIAction("Go to page","http://filkom.ub.ac.id/page/read/pengumuman/pendaftaran-gemastik-2017/9d299d4"),
@@ -341,7 +344,7 @@ public class KitchenSinkController {
             case "imagemap":
             this.reply(replyToken, new ImagemapMessage(
                 createUri("/static/rich"),
-                "This is alt text",
+                "Jadwal Kuliah",
                 new ImagemapBaseSize(1040, 1040),
                 Arrays.asList(
                     new URIImagemapAction(
@@ -372,55 +375,60 @@ public class KitchenSinkController {
                 ));
             break;
             default:
-            break;
+            /*log.info("Returns echo message {}: {}", replyToken, text);
+            this.replyText(
+                replyToken,
+                text
+                );*/
+                break;
+            }
+        }
+
+        private static String createUri(String path) {
+            return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path(path).build()
+            .toUriString();
+        }
+
+        private void system(String... args) {
+            ProcessBuilder processBuilder = new ProcessBuilder(args);
+            try {
+                Process start = processBuilder.start();
+                int i = start.waitFor();
+                log.info("result: {} =>  {}", Arrays.toString(args), i);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            } catch (InterruptedException e) {
+                log.info("Interrupted", e);
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        private static DownloadedContent saveContent(String ext, MessageContentResponse responseBody) {
+            log.info("Got content-type: {}", responseBody);
+
+            DownloadedContent tempFile = createTempFile(ext);
+            try (OutputStream outputStream = Files.newOutputStream(tempFile.path)) {
+                ByteStreams.copy(responseBody.getStream(), outputStream);
+                log.info("Saved {}: {}", ext, tempFile);
+                return tempFile;
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+
+        private static DownloadedContent createTempFile(String ext) {
+            String fileName = LocalDateTime.now().toString() + '-' + UUID.randomUUID().toString() + '.' + ext;
+            Path tempFile = KitchenSinkApplication.downloadedContentDir.resolve(fileName);
+            tempFile.toFile().deleteOnExit();
+            return new DownloadedContent(
+                tempFile,
+                createUri("/downloaded/" + tempFile.getFileName()));
+        }
+
+        @Value
+        public static class DownloadedContent {
+            Path path;
+            String uri;
         }
     }
-
-    private static String createUri(String path) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-        .path(path).build()
-        .toUriString();
-    }
-
-    private void system(String... args) {
-        ProcessBuilder processBuilder = new ProcessBuilder(args);
-        try {
-            Process start = processBuilder.start();
-            int i = start.waitFor();
-            log.info("result: {} =>  {}", Arrays.toString(args), i);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        } catch (InterruptedException e) {
-            log.info("Interrupted", e);
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    private static DownloadedContent saveContent(String ext, MessageContentResponse responseBody) {
-        log.info("Got content-type: {}", responseBody);
-
-        DownloadedContent tempFile = createTempFile(ext);
-        try (OutputStream outputStream = Files.newOutputStream(tempFile.path)) {
-            ByteStreams.copy(responseBody.getStream(), outputStream);
-            log.info("Saved {}: {}", ext, tempFile);
-            return tempFile;
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    private static DownloadedContent createTempFile(String ext) {
-        String fileName = LocalDateTime.now().toString() + '-' + UUID.randomUUID().toString() + '.' + ext;
-        Path tempFile = KitchenSinkApplication.downloadedContentDir.resolve(fileName);
-        tempFile.toFile().deleteOnExit();
-        return new DownloadedContent(
-            tempFile,
-            createUri("/downloaded/" + tempFile.getFileName()));
-    }
-
-    @Value
-    public static class DownloadedContent {
-        Path path;
-        String uri;
-    }
-}
