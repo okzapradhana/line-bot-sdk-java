@@ -230,11 +230,11 @@ public class KitchenSinkController {
         messageConsumer.accept(response);
     }
 
-    /*private void handleSticker(String replyToken, StickerMessageContent content) {
-        reply(replyToken, new StickerMessage(
+    private void handleSticker(String replyToken, StickerMessageContent content) {
+        /*reply(replyToken, new StickerMessage(
             content.getPackageId(), content.getStickerId())
-        );
-    }*/
+        );*/
+    }
 
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
     throws Exception {
