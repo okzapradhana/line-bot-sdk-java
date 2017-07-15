@@ -273,6 +273,7 @@ public class KitchenSinkController {
             case "bye": {
                 Source source = event.getSource();
                 if (source instanceof GroupSource) {
+                    // this.reply(replyToken, )
                     this.replyText(replyToken, "Terimakasih! Selamat ber-Kuliah");
                     lineMessagingClient.leaveGroup(((GroupSource) source).getGroupId()).get();
                 } else if (source instanceof RoomSource) {
@@ -303,7 +304,9 @@ public class KitchenSinkController {
                         new URIAction("Check schedule here",
                           "http://filkom.ub.ac.id/jadwal"),
                         new URIAction("Check SIAM here",
-                         "https://siam.ub.ac.id/")
+                         "https://siam.ub.ac.id/"),
+                        new PostbackAction("Jelajah UB disini!"
+                            ,"Teks ini muncul setelah diklik")
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Jadwal FILKOM 2017/2018", buttonsTemplate);
                 this.reply(replyToken, templateMessage);
